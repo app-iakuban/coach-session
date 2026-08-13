@@ -26,11 +26,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
   window.cookiehub.load(cpm);
 });
 </script>
-<!-- Google Analytics (GA4) G-Y2D060K2Z4 -->
+<!-- Google Analytics (GA4) G-Y2D060K2Z4 + Google Ads AW-17650633966 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y2D060K2Z4"></script>
 <script>
 gtag('js',new Date());
 gtag('config','G-Y2D060K2Z4');
+gtag('config','AW-17650633966');
 </script>
 <!-- Yandex.Metrika 109783359 — разблокируется CookieHub'ом только при согласии на analytics;
      вебвизор выключен (отдельного согласия на запись сессий нет) -->
@@ -1273,5 +1274,29 @@ gtag('config','G-Y2D060K2Z4');
   </div>
 </footer>
 
+<!-- Google Ads: конверсия «CTA бот — Коуч-сессия (лендинг)» по клику на кнопку в бот
+     + проброс UTM/gclid со страницы в bothelp-ссылки (иначе платный трафик в боте помечен как seo) -->
+<script>
+(function(){
+  var p=new URLSearchParams(location.search);
+  var keys=['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+  if(keys.some(function(k){return p.get(k);})||p.get('gclid')){
+    document.querySelectorAll('a[href*="r.bothelp.io"]').forEach(function(a){
+      try{
+        var u=new URL(a.href);
+        keys.forEach(function(k){var v=p.get(k);if(v)u.searchParams.set(k,v);});
+        if(p.get('gclid'))u.searchParams.set('utm_content',p.get('gclid'));
+        a.href=u.toString();
+      }catch(err){}
+    });
+  }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href*="r.bothelp.io"]');
+    if(!a)return;
+    try{gtag('event','conversion',{'send_to':'AW-17650633966/-4aCCLKFn-EcEO6ZveBB','transport_type':'beacon'});}catch(err){}
+    try{gtag('event','cta_bot_click',{'link_url':a.href,'transport_type':'beacon'});}catch(err){}
+  },true);
+})();
+</script>
 </body>
 </html>
